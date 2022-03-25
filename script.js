@@ -5,6 +5,8 @@ class Cell {
     constructor(value=0,box){
         this.value = value
         this.box = box
+        this.selected = 0
+        this.valDiv = ''
     }
 }
 
@@ -18,6 +20,8 @@ function drawGrid(loop=9){
             tempRow[j].box.style.width = "60px";
             tempRow[j].box.style.height = "60px";
             tempRow[j].box.style.border = "2px solid #000000";
+            tempRow[j].box.id = `${i}${j}`;
+            tempRow[j].box.style.textAlign = 'center';
             if (j==2 || j==5) {
                 tempRow[j].box.style.borderRightColor = "#ff0000";
             }
@@ -38,6 +42,7 @@ function drawGrid(loop=9){
 
 drawGrid(9);
 let cells = document.querySelectorAll('.square');
+
 cells.forEach((square) => {
     square.addEventListener('click', ()=>{
         for (let i = 0; i<9; i++){
@@ -45,6 +50,16 @@ cells.forEach((square) => {
                 cell_grid[i][j].box.style.backgroundColor = 'rgb(255,255,255)'
             }
         }
-        square.style.backgroundColor = 'rgba(255,0,0,0.2)'
+        square.style.backgroundColor = 'rgba(255,0,0,0.2)';
+        id = square.getAttribute('id');
+        i = id[0];
+        j = id[1];
+        document.addEventListener('keydown', (e)=>{
+            value = e.key;
+            isNum = isFinite(e.key);
+            if (isNum){
+                cell_grid[i][j].box.innerHTML = `${value}`;
+            }
+        });
     });
 });
