@@ -1,0 +1,28 @@
+:root{
+    --width: 540px;
+}
+
+body {
+    margin: 0;
+}
+
+.header{
+    padding-top: 1rem;
+    text-align: center;
+    justify-content: center;
+    font-size: 100px;
+    font-style: italic;
+    font-weight: bolder;
+}
+.board {
+    position: fixed;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: var(--width);
+    height: var(--width);
+    display: grid;
+    grid-template-columns: repeat(9,auto);
+    justify-content: center;
+    align-content: center;
+}
