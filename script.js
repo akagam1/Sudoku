@@ -1,22 +1,30 @@
 let grid = document.getElementById("board");
 cells = [];
 
+class Cell {
+    constructor(value=0,square){
+        this.value = value
+        this.square = square
+    }
+}
+
 function drawGrid(loop=9){
     for (let i = 0; i<loop; i++){
         tempRow = [];
         for (let j = 0; j<loop; j++) {
-            tempRow[j] = document.createElement('div');
-            tempRow[j].classList.add('square');
-            tempRow[j].style.width = "60px";
-            tempRow[j].style.height = "60px";
-            tempRow[j].style.border = "2px solid #000000";
+            tempElement = document.createElement('div');
+            tempRow[j] = new Cell(0,tempElement)
+            tempRow[j].square.classList.add('square');
+            tempRow[j].square.style.width = "60px";
+            tempRow[j].square.style.height = "60px";
+            tempRow[j].square.style.border = "2px solid #000000";
             if (j==2 || j==5) {
-                tempRow[j].style.borderRightColor = "#ff0000";
+                tempRow[j].square.style.borderRightColor = "#ff0000";
             }
             if (i==2 || i==5) {
-                tempRow[j].style.borderBottomColor = "#ff0000";
+                tempRow[j].square.style.borderBottomColor = "#ff0000";
             }
-            grid.appendChild(tempRow[j]);
+            grid.appendChild(tempRow[j].square);
         }
         cells[i] = tempRow;
     }
