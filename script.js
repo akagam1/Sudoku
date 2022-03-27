@@ -1,14 +1,16 @@
 let grid = document.getElementById("board");
+let but = document.getElementById("button");
 cell_grid = [];
 
 class Cell {
-    constructor(value=0,box){
+    constructor(value=0,box,type){
         this.value = value;
         this.box = box;
+        this.type = null;
     }
 }
 
-function drawGrid(loop=9){
+function drawGrid(loop=1){
     for (let i = 0; i<loop; i++){
         tempRow = [];
         for (let j = 0; j<loop; j++) {
@@ -58,6 +60,7 @@ cells.forEach((square) => {
             if (isNum){
                 cell_grid[i][j].box.innerHTML = `${value}`;
                 cell_grid[i][j].value = value;
+                cell_grid[i][j].type = 1;
             }
         });
     });
@@ -67,7 +70,7 @@ cells.forEach((square) => {
 
 function solution(board){
     let voidCell = findVoid(board);
-    if (voidCell[2] != true){
+    if (!voidCell){
         return true;
     }
     else{
@@ -75,39 +78,40 @@ function solution(board){
         col = voidCell[1];
     }
 
-    for (let i = 1; i<10; i++){
+    for (let i = 1; i<=9; i++){
         if (valid(board,i,[row,col])){
             board[row][col].value = i;
-
+        
             if (solution(board)){
                 return true;
             }
 
             board[row][col].value = 0;
-        }       
+        }    
+          
     }
-    return false
+    return false;
 }
 
 function findVoid(board){
     for (let i=0;i<9;i++){
         for (let j=0;j<9;j++){
             if (board[i][j].value == 0) {
-                return [i,j,true];
+                return [i,j];
             }
         }
     }
-    return [0,0,false];
+    return null;
 }
 
 function valid(board,num,position){
     for (let i=0;i<9;i++) {
-        if (board[position[0]][i].value == num && i != position[1]){
+        if (board[position[0]][i].value == num && position[1] != i){
             return false;
         }
     }
     for (let i=0;i<9;i++){
-        if (board[i][position[1]].value == num && i != position[0]){
+        if (board[i][position[1]].value == num && position[0] != i){
             return false;
         }
     }
@@ -115,9 +119,9 @@ function valid(board,num,position){
     let yBlock = Math.floor(position[0]/3);
     let xBlock = Math.floor(position[1]/3);
 
-    for (let i = yBlock*3;i<yBlock*3 + 3; i++){
-        for (let j = xBlock*3;j<xBlock*3 + 3; j++){
-            if (board[i][j].value == num && (i!=position[0] && j!=position[1])) {
+    for (let i = yBlock*3;i < yBlock*3 + 3; i++){
+        for (let j = xBlock*3;j < xBlock*3 + 3; j++){
+            if ((board[i][j].value == num) && ((i!=position[0]) && (j!=position[1]))) {
                 return false;
             }
         }
@@ -125,15 +129,76 @@ function valid(board,num,position){
     return true;
 }
 
-document.addEventListener('keydown', (e)=>{
-    if (e.code == "Space"){
-        solution(cell_grid);
-        
-        for (let i = 0; i<9; i++) {
-            for (let j = 0; j<9; j++){
-                cell_grid[i][j].box.innerHTML = `${cell_grid[i][j].value}`;
+function solveSudoku(board, row, col){
+    if (row == 8 && col == 9) {
+        return true;
+    }
+
+    if (col==9){
+        row++;
+        col=0;
+    }
+
+    if(board[row][col].value!=0){
+        return solveSudoku(board,row,col+1);
+    }
+
+    for (let i=1;i<=9;i++){
+        if (isSafe(board,row,col,i)){
+            board[row][col].value = i;
+            board[row][col].type = 0;
+
+            if (solveSudoku(board,row,col+1)){
+                return true;
             }
         }
-        
+        board[row][col].value = 0;
+    }
+    return false;
+}
+
+function isSafe(board,row,col,num){
+    for (let i=0; i<=8; i++){
+        if (board[row][i].value == num){
+            return false;
+        }
+    }
+
+    for (let i=0; i<=8; i++){
+        if (board[i][col].value == num){
+            return false;
+        }
+    }
+
+    let x = col - col%3;
+    let y = row - row%3;
+
+    for(let i = 0; i < 3; i++){
+        for(let j = 0; j < 3; j++){
+            if (board[i + y][j + x] == num){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+
+but.addEventListener('click', ()=>{
+    solveSudoku(cell_grid,0,0);
+    for (let i = 0; i<9; i++) {
+        for (let j = 0; j<9; j++){
+            if (cell_grid[i][j].type == 0){
+            tempElement = document.createElement('div');
+            tempElement.style.width = '60px';
+            tempElement.style.height = '60px';
+            tempElement.style.color = 'rgb(0,205,0)';
+            tempElement.innerHTML = `${cell_grid[i][j].value}`;
+            cell_grid[i][j].box.appendChild(tempElement);
+            //cell_grid[i][j].box.innerHTML = `${cell_grid[i][j].value}`;
+            }
+        }
     }
 });
+
+//disable solve button until board is cleared again
