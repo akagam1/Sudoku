@@ -1,5 +1,8 @@
+toSolve = true; //converted to false when board is solved. becomes true again when clear button is clicked
+
 let grid = document.getElementById("board");
 let but = document.getElementById("button");
+let clear = document.getElementById("button-clear");
 cell_grid = [];
 
 class Cell {
@@ -183,19 +186,33 @@ function isSafe(board,row,col,num){
     return true;
 }
 
+clear.addEventListener('click', ()=>{
+    toSolve = true;
+    for (let i = 0; i<9; i++) {
+        for (let j = 0; j<9; j++) {
+            cell_grid[i][j].value = 0;
+            cell_grid[i][j].type = null;
+            cell_grid[i][j].box.innerHTML = null;
+
+        }
+    }
+});
 
 but.addEventListener('click', ()=>{
-    solveSudoku(cell_grid,0,0);
-    for (let i = 0; i<9; i++) {
-        for (let j = 0; j<9; j++){
-            if (cell_grid[i][j].type == 0){
-            tempElement = document.createElement('div');
-            tempElement.style.width = '60px';
-            tempElement.style.height = '60px';
-            tempElement.style.color = 'rgb(0,205,0)';
-            tempElement.innerHTML = `${cell_grid[i][j].value}`;
-            cell_grid[i][j].box.appendChild(tempElement);
+    if (toSolve){
+        solveSudoku(cell_grid,0,0);
+        toSolve = false;
+        for (let i = 0; i<9; i++) {
+            for (let j = 0; j<9; j++){
+                if (cell_grid[i][j].type == 0){
+                    tempElement = document.createElement('div');
+                    tempElement.style.width = '60px';
+                    tempElement.style.height = '60px';
+                    tempElement.style.color = 'rgb(0,205,0)';
+                    tempElement.innerHTML = `${cell_grid[i][j].value}`;
+                    cell_grid[i][j].box.appendChild(tempElement);
             //cell_grid[i][j].box.innerHTML = `${cell_grid[i][j].value}`;
+                }
             }
         }
     }
